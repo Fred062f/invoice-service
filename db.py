@@ -26,7 +26,7 @@ def init_db():
     )
     """)
 
-    # Sample data for subscriptions
+    '''# Sample data for subscriptions
     subscriptions_data = [
         # (subscription_id, price_per_month, down_payment)
         (1, 1200.00, 500.00),
@@ -69,7 +69,7 @@ def init_db():
             cursor.execute("""
             INSERT INTO invoices (subscription_id, amount, invoice_date, due_date, payment_status, description)
             VALUES (?, ?, ?, ?, ?, ?)
-            """, monthly_invoice)
+            """, monthly_invoice)'''
 
     conn.commit()
     conn.close()
