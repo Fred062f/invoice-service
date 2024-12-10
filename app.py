@@ -5,6 +5,7 @@ import os
 from dotenv import load_dotenv
 from flask_jwt_extended import JWTManager, jwt_required
 from db import init_db
+import inspect
 
 load_dotenv()
 
@@ -264,6 +265,81 @@ def delete_invoice(invoice_id):
         return jsonify({"error": "Invoice not found"}), 404
 
     return jsonify({"message": "Invoice deleted successfully"}), 200
+
+
+@app.route('/vehicles/<int:vehicle_id>', methods=['DELETE'])
+@jwt_required() 
+def delete_vehicle(vehicle_id):
+    """
+    Delete a vehicle by ID.
+    
+    ---
+    tags:
+      - Vehicles
+    security:
+      - BearerAuth: []
+    parameters:
+      - name: vehicle_id
+        in: path
+        type: integer
+        required: true
+        description: ID of the vehicle to delete.
+    responses:
+      200:
+        description: Vehicle successfully deleted.
+      404:
+        description: Vehicle not found.
+    """
+    conn = sqlite3.connect(DATABASE)
+    cursor = conn.execute("DELETE FROM vehicles WHERE vehicle_id = ?", (vehicle_id,))
+    conn.commit()
+    row_count = cursor.rowcount
+    conn.close()
+    
+    if row_count == 0:
+        return jsonify({"error": "Vehicle not found"}), 404
+    
+    return jsonify({"message": "Vehicle deleted successfully"}), 200
+
+
+@app.route('/endpoints', methods=['GET'])
+def endpoints():
+    """
+    List all available endpoints in the API, including their descriptions, methods, and JWT token requirements.
+    --- 
+    tags:
+      - Utility
+    responses:
+      200:
+        description: A list of all available routes with their descriptions, methods, and JWT token requirements.
+    """
+    excluded_endpoints = {'static', 'flasgger.static', 'flasgger.oauth_redirect', 'flasgger.<lambda>', 'flasgger.apispec'}
+    excluded_methods = {'HEAD', 'OPTIONS'}
+    routes = []
+
+    for rule in app.url_map.iter_rules():
+        if rule.endpoint not in excluded_endpoints:
+            func = app.view_functions.get(rule.endpoint)
+            if not func:
+                continue
+
+            # Get the docstring
+            full_docstring = inspect.getdoc(func)
+            docstring = full_docstring.split('---')[0].replace("\n", " ").strip() if full_docstring else None
+
+            # Check if the @jwt_required() decorator is applied
+            jwt_required = "@jwt_required" in inspect.getsource(func).split('\n')[1]
+
+            # Exclude methods
+            methods = list(rule.methods - excluded_methods)
+
+            routes.append({
+                'endpoint': rule.rule,
+                'methods': methods,
+                'description': docstring,
+                'jwt_required': jwt_required
+            })
+    return jsonify({'endpoints': routes}), 200
 
 
 if __name__ == "__main__":
