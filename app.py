@@ -267,41 +267,6 @@ def delete_invoice(invoice_id):
     return jsonify({"message": "Invoice deleted successfully"}), 200
 
 
-@app.route('/vehicles/<int:vehicle_id>', methods=['DELETE'])
-@jwt_required() 
-def delete_vehicle(vehicle_id):
-    """
-    Delete a vehicle by ID.
-    
-    ---
-    tags:
-      - Vehicles
-    security:
-      - BearerAuth: []
-    parameters:
-      - name: vehicle_id
-        in: path
-        type: integer
-        required: true
-        description: ID of the vehicle to delete.
-    responses:
-      200:
-        description: Vehicle successfully deleted.
-      404:
-        description: Vehicle not found.
-    """
-    conn = sqlite3.connect(DATABASE)
-    cursor = conn.execute("DELETE FROM vehicles WHERE vehicle_id = ?", (vehicle_id,))
-    conn.commit()
-    row_count = cursor.rowcount
-    conn.close()
-    
-    if row_count == 0:
-        return jsonify({"error": "Vehicle not found"}), 404
-    
-    return jsonify({"message": "Vehicle deleted successfully"}), 200
-
-
 @app.route('/endpoints', methods=['GET'])
 def endpoints():
     """
