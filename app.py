@@ -44,7 +44,7 @@ swagger = Swagger(app, config=swagger_config)
 
 init_db()
 
-@app.route('/invoices', methods=['POST'])
+@app.route('/add', methods=['POST'])
 @jwt_required()
 def create_invoice():
     """
@@ -112,7 +112,7 @@ def create_invoice():
     return jsonify({"id": invoice_id, "message": "Invoice created successfully"}), 201
 
 
-@app.route('/invoices', methods=['GET'])
+@app.route('/list', methods=['GET'])
 @jwt_required()
 def get_invoices():
     """
@@ -180,7 +180,7 @@ def get_invoices():
     return jsonify(invoices), 200
 
 
-@app.route('/invoices/<int:invoice_id>', methods=['PUT'])
+@app.route('/update/<int:invoice_id>', methods=['PUT'])
 @jwt_required()
 def update_invoice(invoice_id):
     """
@@ -233,7 +233,7 @@ def update_invoice(invoice_id):
     return jsonify({"message": "Invoice updated successfully"}), 200
 
 
-@app.route('/invoices/<int:invoice_id>', methods=['DELETE'])
+@app.route('/remove/<int:invoice_id>', methods=['DELETE'])
 @jwt_required()
 def delete_invoice(invoice_id):
     """
@@ -267,7 +267,7 @@ def delete_invoice(invoice_id):
     return jsonify({"message": "Invoice deleted successfully"}), 200
 
 
-@app.route('/endpoints', methods=['GET'])
+@app.route('/', methods=['GET'])
 def endpoints():
     """
     List all available endpoints in the API, including their descriptions, methods, and JWT token requirements.
