@@ -58,7 +58,7 @@ All endpoints require a valid JWT token to be passed in the `Authorization` head
 
 ### Endpoints:
 
-#### `POST /invoices`
+#### `POST /add`
 - **Create a new invoice**.
 - Requires authentication (`JWT`).
 - **Parameters**: 
@@ -69,7 +69,7 @@ All endpoints require a valid JWT token to be passed in the `Authorization` head
   - `payment_status`: Payment status (`Paid`, `Pending`, `Overdue`).
   - `description`: Invoice description.
 
-#### `GET /invoices`
+#### `GET /list`
 - **Get all invoices** or filter invoices by parameters.
 - Requires authentication (`JWT`).
 - **Parameters**:
@@ -78,20 +78,20 @@ All endpoints require a valid JWT token to be passed in the `Authorization` head
   - `sort_by`: Field to sort by (`due_date`, `total_amount`, `invoice_date`).
   - `sort_order`: Sort order (`asc` or `desc`).
 
-#### `PUT /invoices/<int:invoice_id>`
+#### `PUT /update/<int:invoice_id>`
 - **Update an existing invoice** by its ID.
 - Requires authentication (`JWT`).
 - **Parameters**: 
   - `invoice_id`: The ID of the invoice to update.
   - Fields to update: `amount`, `invoice_date`, `due_date`, `payment_status`, `description`.
 
-#### `DELETE /invoices/<int:invoice_id>`
+#### `DELETE /remove/<int:invoice_id>`
 - **Delete an invoice** by its ID.
 - Requires authentication (`JWT`).
 - **Parameters**:
   - `invoice_id`: The ID of the invoice to delete.
 
-#### `GET /endpoints`
+#### `GET /`
 - **List all available endpoints** in the API.
 - No authentication required.
 
